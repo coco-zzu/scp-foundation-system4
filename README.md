@@ -1,0 +1,3 @@
+
+这是一个基于springboot和mybatis的数据库大作业
+实现了scp档案库的管理（增删改查）
