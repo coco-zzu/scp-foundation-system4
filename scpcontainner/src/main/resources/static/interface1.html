@@ -1,0 +1,1358 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns="http://www.w3.org/1999/html">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SCP Foundation - 文档库</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Courier New', monospace;
+            background: #000 url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiPjxyZWN0IHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9IiMwMDAwMDAiLz48Y2lyY2xlIGN4PSIxMCUiIGN5PSIxMCUiIHI9IjEiIGZpbGw9IiMwMDY0MDAiLz48Y2lyY2xlIGN4PSI5MCUiIGN5PSI5MCUiIHI9IjEiIGZpbGw9IiMwMDY0MDAiLz48L3N2Zz4=');
+            background-size: cover;
+            color: #0f0;
+            height: 100vh;
+            overflow: hidden;
+            position: relative;
+        }
+        body::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: repeating-linear-gradient(
+                    0deg,
+                    rgba(0, 0, 0, 0.15),
+                    rgba(0, 0, 0, 0.15) 1px,
+                    transparent 1px,
+                    transparent 2px
+            );
+            pointer-events: none;
+        }
+        .container {
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            position: relative;
+            z-index: 1;
+            padding: 20px;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #0f0;
+            padding-bottom: 15px;
+        }
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+            letter-spacing: 3px;
+            margin-bottom: 5px;
+            text-shadow: 0 0 10px #0f0;
+        }
+        .subtitle {
+            font-size: 14px;
+            color: #0a0;
+            margin-top: 5px;
+        }
+        .classified {
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            font-size: 12px;
+            color: #f00;
+            transform: rotate(15deg);
+            text-shadow: 0px 0px 10px #f00;
+        }
+        .content-container {
+            display: flex;
+            flex: 1;
+            gap: 20px;
+        }
+        .sidebar {
+            width: 250px;
+            background: rgba(0, 15, 0, 0.85);
+            border: 1px solid #00aa00;
+            border-radius: 5px;
+            padding: 15px;
+            box-shadow: 0 0 10px rgba(0, 255, 0, 0.3);
+            overflow-y: auto;
+        }
+        .main-content {
+            flex: 1;
+            background: rgba(0, 15, 0, 0.85);
+            border: 1px solid #00aa00;
+            border-radius: 5px;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0, 255, 0, 0.3);
+            overflow-y: auto;
+            position: relative;
+        }
+        .main-content::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(0, 255, 0, 0.1), transparent);
+            transition: 0.5s;
+        }
+        .main-content:hover::before {
+            left: 100%;
+        }
+        .search-box {
+            margin-bottom: 15px;
+        }
+        .search-box input {
+            width: 100%;
+            padding: 10px;
+            background: rgba(0, 20, 0, 0.7);
+            border: 1px solid #0a0;
+            border-radius: 3px;
+            color: #0f0;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            outline: none;
+        }
+        .foundation-list{
+            list-style: none;
+        }
+        .foundation-list li {
+            padding: 10px;
+            border-bottom: 1px solid #0a0;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .scp-list {
+            list-style: none;
+        }
+        .scp-list li {
+            padding: 10px;
+            border-bottom: 1px solid #0a0;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .scp-list li:hover {
+            background: rgba(0, 50, 0, 0.5);
+            box-shadow: 0 0 5px rgba(0, 255, 0, 0.3);
+        }
+        .scp-list li.active {
+            background: rgba(0, 80, 0, 0.7);
+            border-left: 3px solid #0f0;
+        }
+        .scp-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #0a0;
+        }
+        .item-id {
+            font-size: 24px;
+            font-weight: bold;
+            letter-spacing: 2px;
+            text-shadow: 0 0 5px #0f0;
+        }
+        .item-class {
+            font-size: 16px;
+            color: #ff0;
+            padding: 5px 10px;
+            border: 1px solid #ff0;
+            border-radius: 3px;
+        }
+        .item-content {
+            line-height: 1.6;
+        }
+        .item-content h3 {
+            margin: 15px 0 10px;
+            color: #0f0;
+            border-bottom: 1px dashed #0a0;
+            padding-bottom: 5px;
+        }
+        .item-content p {
+            margin-bottom: 10px;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 20px;
+            padding-top: 10px;
+            border-top: 1px solid #0a0;
+            font-size: 12px;
+            color: #0a0;
+        }
+        .warning {
+            padding: 10px;
+            margin: 15px 0;
+            border: 1px dashed #f00;
+            color: #f00;
+            font-size: 12px;
+            background: rgba(255, 0, 0, 0.05);
+        }
+        .btn {
+            padding: 8px 15px;
+            background: rgba(0, 30, 0, 0.7);
+            border: 1px solid #0f0;
+            border-radius: 3px;
+            color: #0f0;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s;
+            letter-spacing: 1px;
+            margin: 2px;
+        }
+        .btn:hover {
+            background: rgba(0, 50, 0, 0.9);
+            box-shadow: 0 0 10px rgba(0, 255, 0, 0.5);
+        }
+        .btn-danger {
+            background: rgba(30, 0, 0, 0.7);
+            border: 1px solid #f00;
+            color: #f00;
+        }
+        .btn-danger:hover {
+            background: rgba(50, 0, 0, 0.9);
+            box-shadow: 0 0 10px rgba(255, 0, 0, 0.5);
+        }
+        .btn-success {
+            background: rgba(0, 30, 0, 0.7);
+            border: 1px solid #0f0;
+            color: #0f0;
+        }
+        .btn-success:hover {
+            background: rgba(0, 50, 0, 0.9);
+            box-shadow: 0 0 10px rgba(0, 255, 0, 0.5);
+        }
+        .blink {
+            animation: blink 1.5s infinite;
+        }
+        @keyframes blink {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+        .access-level {
+            text-align: right;
+            font-size: 12px;
+            color: #0a0;
+            margin-top: 10px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            color: #0f0;
+        }
+        .form-group input, .form-group textarea, .form-group select {
+            width: 100%;
+            padding: 8px;
+            background: rgba(0, 20, 0, 0.7);
+            border: 1px solid #0a0;
+            border-radius: 3px;
+            color: #0f0;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+        }
+        .form-group textarea {
+            height: 80px;
+            resize: vertical;
+        }
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.7);
+            overflow-y: auto;
+        }
+        .modal-content {
+            background: rgba(0, 15, 0, 0.95);
+            margin: 2% auto;
+            padding: 20px;
+            border: 1px solid #00aa00;
+            border-radius: 5px;
+            width: 90%;
+            max-width: 800px;
+            box-shadow: 0 0 20px rgba(0, 255, 0, 0.5);
+            position: relative;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+        .close {
+            color: #0f0;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .close:hover {
+            color: #ff0;
+        }
+        .action-buttons {
+            margin: 10px 0;
+            text-align: center;
+        }
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px;
+            border-radius: 5px;
+            color: white;
+            z-index: 2000;
+            display: none;
+        }
+        .notification.success {
+            background-color: rgba(0, 100, 0, 0.9);
+            border: 1px solid #0f0;
+        }
+        .notification.error {
+            background-color: rgba(100, 0, 0, 0.9);
+            border: 1px solid #f00;
+        }
+        /* 固定操作按钮在模态框底部 */
+        .modal-actions {
+            position: sticky;
+            bottom: 0;
+            background: rgba(0, 15, 0, 0.95);
+            padding: 10px 0;
+            margin: 15px -20px -20px;
+            border-top: 1px solid #00aa00;
+        }
+        /* 搜索结果高亮 */
+        .highlight {
+            background-color: rgba(255, 255, 0, 0.3);
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+<div class="container" id="app">
+    <div v-if="canGoBack" style="margin-bottom: 15px;">
+        <button class="btn" @click="goBack" style="width: auto; display: inline-block;">
+            ← 返回上一页
+        </button>
+    </div>
+    <div class="header">
+        <div class="logo">SCP FOUNDATION</div>
+        <div class="subtitle">SECURE • CONTAIN • PROTECT</div>
+        <div class="classified">TOP SECRET</div>
+    </div>
+
+    <div class="content-container">
+        <!-- 侧边栏 -->
+        <div class="sidebar">
+            <div class="search-box">
+                <input type="text" placeholder="搜索项目..." id="searchInput" v-model="searchQuery" @input="performSearch">
+            </div>
+
+            <!-- 基金会分部列表 -->
+            <div v-if="activeFoundation === '基金会'">
+                <ul class="foundation-list" id="foundationList">
+                    <li v-for="foundation in foundations"
+                        :key="foundation.id"
+                        :class="{ active: foundation.id === activeFoundation }"
+                        @click="selectFoundation(foundation.id)"
+                        onmouseover="this.style.background='rgba(0, 50, 0, 0.5)'; this.style.boxShadow='0 0 5px rgba(0, 255, 0, 0.3)';"
+                        onmouseout="this.style.background=''; this.style.boxShadow='';">
+                        {{ foundation.name }}
+                    </li>
+                </ul>
+            </div>
+
+            <!-- 子分类列表 -->
+            <div v-else-if="activeSubCategory === ''">
+                <div style="margin-bottom: 15px; font-weight: bold; color: #0f0;">
+                    {{ activeFoundation }}
+                </div>
+                <ul class="foundation-list" id="subCategoryList">
+                    <li v-for="category in subCategories"
+                        :key="category.id"
+                        class="foundation-list-item"
+                        @click="selectSubCategory(category.id)"
+                        onmouseover="this.style.background='rgba(0, 50, 0, 0.5)'; this.style.boxShadow='0 0 5px rgba(0, 255, 0, 0.3)';"
+                        onmouseout="this.style.background=''; this.style.boxShadow='';">
+                        {{ category.name }}
+                    </li>
+                </ul>
+            </div>
+
+            <!-- 具体项目列表 -->
+            <div v-else>
+                <div style="margin-bottom: 15px; font-weight: bold; color: #0f0;">
+                    {{ activeFoundation }} - {{ subCategories.find(c => c.id === activeSubCategory)?.name }}
+                    <div class="action-buttons">
+                        <button class="btn btn-success" @click="showAddForm">添加</button>
+                    </div>
+                </div>
+                <ul class="scp-list" id="itemList">
+                    <li v-for="item in filteredList"
+                        :key="item.id"
+                        :class="{ active: item.id === activeItem }"
+                        @click="selectItem(item.id)"
+                        onmouseover="this.style.background='rgba(0, 50, 0, 0.5)'; this.style.boxShadow='0 0 5px rgba(0, 255, 0, 0.3)';"
+                        onmouseout="this.style.background=''; this.style.boxShadow='';">
+                        <span v-html="highlightSearchText(item.id + ' - ' + item.name)"></span>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="access-level blink">
+                访问级别: 3级及以上
+            </div>
+            <div class="warning">
+                警告: 未授权访问将导致记忆删除
+            </div>
+        </div>
+
+        <!-- 主内容区域 -->
+        <div class="main-content" id="documentContent">
+            <!-- 基金会首页 -->
+            <div v-if="activeFoundation === '基金会'">
+                <div class="scp-header">
+                    <div class="item-id">基金会简历</div>
+                    <div>
+                        访问级别: 绝密
+                    </div>
+                </div>
+
+                <div class="item-content">
+                    <h3>机构名称</h3>
+                    <p>SCP 基金会（Special Containment Procedures Foundation）</p>
+
+                    <h3>机构定位</h3>
+                    <p>全球性非政府特殊异常收容组织，致力于保护人类免受超自然、超常及潜在威胁性异常实体（SCP 项目）的伤害，同时防止公众知晓异常存在以维持社会稳定。</p>
+
+                    <h3>核心使命</h3>
+                    <p>收容（Contain）：通过制定专属收容协议，对各类 SCP 项目进行安全隔离，消除其扩散风险；</p>
+                    <p>保护（Protect）：建立多层级防御体系，抵御异常项目对人类社会、生态及现实结构的破坏；</p>
+                    <p>研究（Secure）：开展严谨的科学研究，分析 SCP 项目的起源、特性与运作机制，为收容策略提供技术支撑。</p>
+
+                    <h3>主要职责</h3>
+                    <p>全球范围内 SCP 项目的定位、回收与分级（Safe/Euclid/Keter 等）；</p>
+                    <p>定制化收容设施的设计、建造与运维（如 Site 系列站点、Area 区域）；</p>
+                    <p>跨部门协作执行异常事件应急处理（MTF 机动特遣队专项行动）；</p>
+                    <p>严格的信息管控，通过记忆删除、虚假信息发布等手段维护 "常态面纱"。</p>
+
+                    <h3>运营准则</h3>
+                    <p>遵循 "控制、收容、保护" 核心原则，以人类整体存续为首要目标，不计代价确保异常项目处于稳定收容状态，禁止未经授权的研究与利用。</p>
+                </div>
+            </div>
+
+            <!-- 子分类列表页面 -->
+            <div v-else-if="activeSubCategory === ''">
+                <div class="scp-header">
+                    <div class="item-id">{{ activeFoundation }} 子分类</div>
+                    <div class="item-class">项目等级: 绝密</div>
+                </div>
+
+                <div class="item-content">
+                    <p>请选择一个子分类查看详细信息</p>
+                </div>
+            </div>
+
+            <!-- 项目列表页面 -->
+            <div v-else-if="activeItem === ''">
+                <div class="scp-header">
+                    <div class="item-id">{{ activeFoundation }} - {{ subCategories.find(c => c.id === activeSubCategory)?.name }}</div>
+                    <div class="item-class">项目等级: 绝密</div>
+                </div>
+
+                <div class="item-content">
+                    <div v-if="filteredList.length > 0">
+                        <p>请选择一个项目查看详细信息</p>
+                        <p>搜索结果: {{ filteredList.length }} 个项目</p>
+                    </div>
+                    <div v-else>
+                        <p v-if="searchQuery">未找到匹配的项目。</p>
+                        <p v-else>该分类暂无记录。</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 具体项目详情页面 -->
+            <div v-else>
+                <div class="scp-header">
+                    <div class="item-id">{{ getActiveItem().id }} - {{ getActiveItem().name }}</div>
+                    <div v-if="getActiveItem().scpclass" :class="'item-class ' + getClassType(getActiveItem().scpclass)">
+                        {{ getActiveItem().scpclass }}
+                    </div>
+                    <div v-else-if="getActiveItem().clearance" class="item-class">
+                        {{ getActiveItem().clearance }}
+                    </div>
+                    <div v-else-if="getActiveItem().status" :class="getActiveItem().status === 'Active' ? 'class-safe' : 'class-keter'">
+                        {{ getActiveItem().status }}
+                    </div>
+                </div>
+
+                <div class="item-content">
+                    <div v-if="activeSubCategory === 'scp'">
+                        <h3>项目编号</h3>
+                        <p>{{ getActiveItem().id }}</p>
+
+                        <h3>项目等级</h3>
+                        <p>{{ getActiveItem().scpclass }}</p>
+
+                        <h3>特殊收容措施</h3>
+                        <p>该项目需要特殊的收容措施，具体内容涉及{{ getActiveItem().alearance }}级别的安全协议。</p>
+
+                        <h3>描述</h3>
+                        <p>{{ getActiveItem().description }}</p>
+
+                        <h3>实验记录</h3>
+                        <p>实验表明，{{ getActiveItem().name }}在特定条件下会展现出异常特性。所有实验必须在3级人员监督下进行。</p>
+
+                        <h3>附录</h3>
+                        <p>回收日期：{{ getActiveItem().controlltime }}</p>
+                        <p>回收地点：{{ getActiveItem().controllspace }}</p>
+                    </div>
+
+                    <div v-else-if="activeSubCategory === 'mtf'">
+                        <h3>特遣队编号</h3>
+                        <p>{{ getActiveItem().id }}</p>
+
+                        <h3>特遣队名称</h3>
+                        <p>{{ getActiveItem().name }}</p>
+
+                        <h3>任务描述</h3>
+                        <p>{{ getActiveItem().description }}</p>
+
+                        <h3>当前状态</h3>
+                        <p>{{ getActiveItem().status }}</p>
+
+                        <h3>人员配置</h3>
+                        <p>{{ getActiveItem().num }}</p>
+                    </div>
+
+                    <div v-else-if="activeSubCategory === 'researcher'">
+                        <h3>人员编号</h3>
+                        <p>{{ getActiveItem().id }}</p>
+
+                        <h3>姓名</h3>
+                        <p>{{ getActiveItem().name }}</p>
+
+                        <h3>安全许可等级</h3>
+                        <p>{{ getActiveItem().clearance }}</p>
+
+                        <h3>专业领域</h3>
+                        <p>{{ getActiveItem().specialization }}</p>
+
+                        <h3>当前分配</h3>
+                        <p>{{ activeFoundation }} 研究部门</p>
+                    </div>
+
+                    <div v-else-if="activeSubCategory === 'dclass'">
+                        <h3>人员编号</h3>
+                        <p>{{ getActiveItem().id }}</p>
+
+                        <h3>姓名</h3>
+                        <p>{{ getActiveItem().name }}</p>
+
+                        <h3>状态</h3>
+                        <p>{{ getActiveItem().status }}</p>
+
+                        <h3>当前分配</h3>
+                        <p>{{ getActiveItem().assignment }}</p>
+
+                        <h3>备注</h3>
+                        <p>D-Class人员是用于高风险实验的志愿者，通常来自死刑犯或其他来源。</p>
+                    </div>
+
+                    <div v-else-if="activeSubCategory === 'security'">
+                        <h3>人员编号</h3>
+                        <p>{{ getActiveItem().id }}</p>
+
+                        <h3>姓名</h3>
+                        <p>{{ getActiveItem().name }}</p>
+
+                        <h3>年龄</h3>
+                        <p>{{ getActiveItem().age }}</p>
+
+                        <h3>当前状态</h3>
+                        <p>{{ getActiveItem().status }}</p>
+                    </div>
+                </div>
+
+                <div class="action-buttons">
+                    <button class="btn" @click="showEditForm(getActiveItem())">编辑</button>
+                    <button class="btn btn-danger" @click="deleteItem(getActiveItem().id)">删除</button>
+                </div>
+            </div>
+
+            <div class="footer">
+                SCP基金会文档数据库 v0.0.1<br>
+                访问者: Dr.████
+            </div>
+        </div>
+    </div>
+
+    <!-- 添加/编辑表单模态框 -->
+    <div id="itemModal" class="modal">
+        <div class="modal-content">
+            <span class="close" @click="closeModal">&times;</span>
+            <h2>{{ isEditing ? '编辑' : '添加' }} {{ getCurrentCategoryName() }}</h2>
+            <form @submit.prevent="saveItem">
+                <div v-if="activeSubCategory === 'scp'">
+                    <div class="form-group">
+                        <label for="scpId">项目编号:</label>
+                        <input type="text" id="scpId" v-model="currentItem.id" :disabled="isEditing" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="scpName">项目名称:</label>
+                        <input type="text" id="scpName" v-model="currentItem.name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="scpClass">项目等级:</label>
+                        <select id="scpClass" v-model="currentItem.scpclass" required>
+                            <option value="Safe">Safe</option>
+                            <option value="Euclid">Euclid</option>
+                            <option value="Keter">Keter</option>
+                            <option value="Thaumiel">Thaumiel</option>
+                            <option value="Neutralized">Neutralized</option>
+                            <option value="Apollyon">Apollyon</option>
+                            <option value="Archon">Archon</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="scpDescription">描述:</label>
+                        <textarea id="scpDescription" v-model="currentItem.description" required></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="scpFoundation">基金会:</label>
+                        <input type="text" id="scpFoundation" v-model="currentItem.foudation" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label for="scpAlearance">安全协议:</label>
+                        <input type="text" id="scpAlearance" v-model="currentItem.alearance">
+                    </div>
+                    <div class="form-group">
+                        <label for="scpControlltime">收容日期:</label>
+                        <input type="text" id="scpControlltime" v-model="currentItem.controlltime">
+                    </div>
+                    <div class="form-group">
+                        <label for="scpControllspace">收容地点:</label>
+                        <input type="text" id="scpControllspace" v-model="currentItem.controllspace">
+                    </div>
+                    <div class="form-group">
+                        <label for="scpClearance">许可等级:</label>
+                        <input type="text" id="scpClearance" v-model="currentItem.clearance">
+                    </div>
+                    <div class="form-group">
+                        <label for="scpStatus">状态:</label>
+                        <input type="text" id="scpStatus" v-model="currentItem.status">
+                    </div>
+                    <div class="form-group">
+                        <label for="scpAssignment">分配:</label>
+                        <input type="text" id="scpAssignment" v-model="currentItem.assignment">
+                    </div>
+                    <div class="form-group">
+                        <label for="scpAge">年龄:</label>
+                        <input type="text" id="scpAge" v-model="currentItem.age">
+                    </div>
+                    <div class="form-group">
+                        <label for="scpSpecialization">专业领域:</label>
+                        <input type="text" id="scpSpecialization" v-model="currentItem.specialization">
+                    </div>
+                    <div class="form-group">
+                        <label for="scpNum">编号:</label>
+                        <input type="text" id="scpNum" v-model="currentItem.num">
+                    </div>
+                </div>
+
+                <div v-else-if="activeSubCategory === 'mtf'">
+                    <div class="form-group">
+                        <label for="mtfId">特遣队编号:</label>
+                        <input type="text" id="mtfId" v-model="currentItem.id" :disabled="isEditing" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="mtfName">特遣队名称:</label>
+                        <input type="text" id="mtfName" v-model="currentItem.name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="mtfDescription">任务描述:</label>
+                        <textarea id="mtfDescription" v-model="currentItem.description" required></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="mtfFoundation">基金会:</label>
+                        <input type="text" id="mtfFoundation" v-model="currentItem.foudation" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label for="mtfStatus">状态:</label>
+                        <input type="text" id="mtfStatus" v-model="currentItem.status" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="mtfNum">人员配置:</label>
+                        <input type="text" id="mtfNum" v-model="currentItem.num" required>
+                    </div>
+                </div>
+
+                <div v-else-if="activeSubCategory === 'researcher'">
+                    <div class="form-group">
+                        <label for="researcherId">人员编号:</label>
+                        <input type="text" id="researcherId" v-model="currentItem.id" :disabled="isEditing" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="researcherName">姓名:</label>
+                        <input type="text" id="researcherName" v-model="currentItem.name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="researcherClearance">许可等级:</label>
+                        <input type="text" id="researcherClearance" v-model="currentItem.clearance" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="researcherSpecialization">专业领域:</label>
+                        <input type="text" id="researcherSpecialization" v-model="currentItem.specialization" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="researcherFoundation">基金会:</label>
+                        <input type="text" id="researcherFoundation" v-model="currentItem.foudation" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label for="researcherStatus">状态:</label>
+                        <input type="text" id="researcherStatus" v-model="currentItem.status" required>
+                    </div>
+                </div>
+
+                <div v-else-if="activeSubCategory === 'dclass'">
+                    <div class="form-group">
+                        <label for="dclassId">人员编号:</label>
+                        <input type="text" id="dclassId" v-model="currentItem.id" :disabled="isEditing" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="dclassName">姓名:</label>
+                        <input type="text" id="dclassName" v-model="currentItem.name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="dclassStatus">状态:</label>
+                        <input type="text" id="dclassStatus" v-model="currentItem.status" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="dclassAssignment">分配:</label>
+                        <input type="text" id="dclassAssignment" v-model="currentItem.assignment" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="dclassFoundation">基金会:</label>
+                        <input type="text" id="dclassFoundation" v-model="currentItem.foudation" readonly>
+                    </div>
+                </div>
+
+                <div v-else-if="activeSubCategory === 'security'">
+                    <div class="form-group">
+                        <label for="securityId">人员编号:</label>
+                        <input type="text" id="securityId" v-model="currentItem.id" :disabled="isEditing" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="securityName">姓名:</label>
+                        <input type="text" id="securityName" v-model="currentItem.name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="securityAge">年龄:</label>
+                        <input type="text" id="securityAge" v-model="currentItem.age" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="securityFoundation">基金会:</label>
+                        <input type="text" id="securityFoundation" v-model="currentItem.foudation" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label for="securityStatus">状态:</label>
+                        <input type="text" id="securityStatus" v-model="currentItem.status" required>
+                    </div>
+                </div>
+
+                <div class="modal-actions">
+                    <div class="action-buttons">
+                        <button type="submit" class="btn btn-success">保存</button>
+                        <button type="button" class="btn" @click="closeModal">取消</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- 通知框 -->
+    <div id="notification" class="notification"></div>
+</div>
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+<script src="https://unpkg.com/vue@3.3.4/dist/vue.global.prod.js"></script>
+<script>
+    const { createApp, ref, computed } = Vue;
+    createApp({
+        setup() {
+            // 基金会分部数据
+            const foundations = ref([
+                {id: '基金会', name: '基金会'},
+                {id: '中国分区1', name: '中国分区-1'},
+                {id: '中国分区2', name: '中国分区-2'},
+                {id: '美国分区1', name: '美国分区-1'},
+                {id: '美国分区2', name: '美国分区-2'},
+                {id: '俄罗斯分区1', name: '俄罗斯分区-1'},
+                {id: '俄罗斯分区2', name: '俄罗斯分区-2'},
+                {id: '俄罗斯分区3', name: '俄罗斯分区-3'},
+                {id: '日本分区1', name: '日本分区-1'}
+            ]);
+
+            // 子分类数据
+            const subCategories = ref([
+                {id: 'mtf', name: '九尾狐特遣队'},
+                {id: 'scp', name: 'SCP收容物'},
+                {id: 'researcher', name: '研究人员'},
+                {id: 'dclass', name: 'D-Class人员'},
+                {id: 'security', name: '保安'}
+            ]);
+
+            // 数据库定义
+            const scpDatabase = ref({
+                '中国分区1': [],
+                '中国分区2': [],
+                '美国分区1': [],
+                '美国分区2': [],
+                '俄罗斯分区1': [],
+                '俄罗斯分区2': [],
+                '俄罗斯分区3': [],
+                '日本分区1': []
+            });
+
+            const mtfDatabase = ref({
+                '中国分区1': [],
+                '中国分区2': [],
+                '美国分区1': [],
+                '美国分区2': [],
+                '俄罗斯分区1': [],
+                '俄罗斯分区2': [],
+                '俄罗斯分区3': [],
+                '日本分区1': []
+            });
+
+            const researcherDatabase = ref({
+                '中国分区1': [],
+                '中国分区2': [],
+                '美国分区1': [],
+                '美国分区2': [],
+                '俄罗斯分区1': [],
+                '俄罗斯分区2': [],
+                '俄罗斯分区3': [],
+                '日本分区1': []
+            });
+
+            const dclassDatabase = ref({
+                '中国分区1': [],
+                '中国分区2': [],
+                '美国分区1': [],
+                '美国分区2': [],
+                '俄罗斯分区1': [],
+                '俄罗斯分区2': [],
+                '俄罗斯分区3': [],
+                '日本分区1': []
+            });
+
+            const securityDatabase = ref({
+                '中国分区1': [],
+                '中国分区2': [],
+                '美国分区1': [],
+                '美国分区2': [],
+                '俄罗斯分区1': [],
+                '俄罗斯分区2': [],
+                '俄罗斯分区3': [],
+                '日本分区1': []
+            });
+
+            // 导航历史栈
+            const navigationHistory = ref([]);
+
+            // 当前选中的基金会分部
+            const activeFoundation = ref('基金会');
+
+            // 当前选中的子分类
+            const activeSubCategory = ref('');
+
+            // 当前选中的具体项目
+            const activeItem = ref('');
+
+            // 当前编辑的项目
+            const currentItem = ref({});
+
+            // 是否正在编辑
+            const isEditing = ref(false);
+
+            // 搜索查询
+            const searchQuery = ref('');
+
+            // 当前显示的列表
+            const currentScpList = computed(() => {
+                return scpDatabase.value[activeFoundation.value] || [];
+            });
+
+            const currentMtfList = computed(() => {
+                return mtfDatabase.value[activeFoundation.value] || [];
+            });
+
+            const currentResearcherList = computed(() => {
+                return researcherDatabase.value[activeFoundation.value] || [];
+            });
+
+            const currentDclassList = computed(() => {
+                return dclassDatabase.value[activeFoundation.value] || [];
+            });
+
+            const currentSecurityList = computed(() => {
+                return securityDatabase.value[activeFoundation.value] || [];
+            });
+
+            // 获取当前分类的数据列表
+            const getCurrentList = computed(() => {
+                switch (activeSubCategory.value) {
+                    case 'mtf':
+                        return currentMtfList.value;
+                    case 'scp':
+                        return currentScpList.value;
+                    case 'researcher':
+                        return currentResearcherList.value;
+                    case 'dclass':
+                        return currentDclassList.value;
+                    case 'security':
+                        return currentSecurityList.value;
+                    default:
+                        return [];
+                }
+            });
+
+            // 过滤后的列表（用于搜索）
+            const filteredList = computed(() => {
+                if (!searchQuery.value) {
+                    return getCurrentList.value;
+                }
+
+                const query = searchQuery.value.toLowerCase();
+                return getCurrentList.value.filter(item => {
+                    return (
+                        (item.id && item.id.toLowerCase().includes(query)) ||
+                        (item.name && item.name.toLowerCase().includes(query)) ||
+                        (item.scpclass && item.scpclass.toLowerCase().includes(query)) ||
+                        (item.description && item.description.toLowerCase().includes(query)) ||
+                        (item.status && item.status.toLowerCase().includes(query)) ||
+                        (item.clearance && item.clearance.toLowerCase().includes(query))
+                    );
+                });
+            });
+
+            // 获取当前分类名称
+            const getCurrentCategoryName = () => {
+                const category = subCategories.value.find(c => c.id === activeSubCategory.value);
+                return category ? category.name : '';
+            };
+
+            // 数据初始化函数
+            const dataInit = (foundationId, category) => {
+                console.log('正在初始化数据:', foundationId, '分类:', category);
+
+                let apiUrl = '';
+                let targetDatabase = null;
+
+                switch (category) {
+                    case 'scp':
+                        apiUrl = '/api/scp/list';
+                        targetDatabase = scpDatabase;
+                        break;
+                    case 'mtf':
+                        apiUrl = '/api/mtf/list';
+                        targetDatabase = mtfDatabase;
+                        break;
+                    case 'researcher':
+                        apiUrl = '/api/researcher/list';
+                        targetDatabase = researcherDatabase;
+                        break;
+                    case 'dclass':
+                        apiUrl = '/api/dclass/list';
+                        targetDatabase = dclassDatabase;
+                        break;
+                    case 'security':
+                        apiUrl = '/api/security/list';
+                        targetDatabase = securityDatabase;
+                        break;
+                    default:
+                        return;
+                }
+
+                axios.post(apiUrl, {
+                    foudationId: foundationId
+                }, {
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    },
+                    timeout: 10000
+                }).then(function (response) {
+                    console.log('成功获取数据:', foundationId, category);
+                    if (Array.isArray(response.data)) {
+                        targetDatabase.value[foundationId] = response.data;
+                        console.log('数据已存储:', foundationId, category, response.data.length, '个项目');
+                    } else {
+                        targetDatabase.value[foundationId] = [];
+                    }
+                }).catch(function (error) {
+                    console.error('获取数据失败:', foundationId, category, error);
+                    targetDatabase.value[foundationId] = [];
+                    showNotification('获取数据失败: ' + error.message, 'error');
+                });
+            };
+
+            // 显示通知
+            const showNotification = (message, type) => {
+                const notification = document.getElementById('notification');
+                notification.textContent = message;
+                notification.className = 'notification ' + type;
+                notification.style.display = 'block';
+
+                setTimeout(() => {
+                    notification.style.display = 'none';
+                }, 3000);
+            };
+
+            // 切换选中的基金会分部
+            const selectFoundation = (foundationId) => {
+                navigationHistory.value.push({
+                    foundation: activeFoundation.value,
+                    subCategory: activeSubCategory.value,
+                    item: activeItem.value
+                });
+
+                activeFoundation.value = foundationId;
+                activeSubCategory.value = '';
+                activeItem.value = '';
+                searchQuery.value = '';
+
+                // 按需加载数据
+                if (foundationId !== '基金会') {
+                    // 可以选择在这里预加载所有分类的数据，或者按需加载
+                }
+            };
+
+            // 选择子分类
+            const selectSubCategory = (categoryId) => {
+                navigationHistory.value.push({
+                    foundation: activeFoundation.value,
+                    subCategory: activeSubCategory.value,
+                    item: activeItem.value
+                });
+
+                activeSubCategory.value = categoryId;
+                activeItem.value = '';
+                searchQuery.value = '';
+
+                // 按需加载数据
+                if (activeFoundation.value !== '基金会') {
+                    const dataList = getCurrentList.value;
+                    if (!dataList || dataList.length === 0) {
+                        dataInit(activeFoundation.value, categoryId);
+                    }
+                }
+            };
+
+            // 选择具体项目
+            const selectItem = (itemId) => {
+                navigationHistory.value.push({
+                    foundation: activeFoundation.value,
+                    subCategory: activeSubCategory.value,
+                    item: activeItem.value
+                });
+
+                activeItem.value = itemId;
+            };
+
+            // 返回上一页
+            const goBack = () => {
+                if (navigationHistory.value.length > 0) {
+                    const previousState = navigationHistory.value.pop();
+                    activeFoundation.value = previousState.foundation;
+                    activeSubCategory.value = previousState.subCategory;
+                    activeItem.value = previousState.item;
+                } else {
+                    activeFoundation.value = '基金会';
+                    activeSubCategory.value = '';
+                    activeItem.value = '';
+                }
+                searchQuery.value = '';
+            };
+
+            // 获取项目等级的CSS类
+            const getClassType = (classLevel) => {
+                switch (classLevel.toLowerCase()) {
+                    case 'safe':
+                        return 'class-safe';
+                    case 'euclid':
+                        return 'class-euclid';
+                    case 'keter':
+                        return 'class-keter';
+                    default:
+                        return 'class-safe';
+                }
+            };
+
+            // 获取当前选中的具体项目
+            const getActiveItem = () => {
+                if (!activeItem.value) return {};
+
+                let itemList = [];
+                switch (activeSubCategory.value) {
+                    case 'mtf':
+                        itemList = currentMtfList.value;
+                        break;
+                    case 'scp':
+                        itemList = currentScpList.value;
+                        break;
+                    case 'researcher':
+                        itemList = currentResearcherList.value;
+                        break;
+                    case 'dclass':
+                        itemList = currentDclassList.value;
+                        break;
+                    case 'security':
+                        itemList = currentSecurityList.value;
+                        break;
+                    default:
+                        return {};
+                }
+
+                return itemList.find(item => item.id === activeItem.value) || {};
+            };
+
+            // 显示添加表单
+            const showAddForm = () => {
+                isEditing.value = false;
+                currentItem.value = {
+                    foudation: activeFoundation.value
+                };
+
+                // 根据不同分类初始化默认值
+                switch (activeSubCategory.value) {
+                    case 'scp':
+                        currentItem.value.scpclass = 'Safe';
+                        break;
+                    case 'mtf':
+                        currentItem.value.status = 'Active';
+                        break;
+                    case 'researcher':
+                        currentItem.value.clearance = 'Level 1';
+                        currentItem.value.status = 'Active';
+                        break;
+                    case 'dclass':
+                        currentItem.value.status = 'Active';
+                        break;
+                    case 'security':
+                        currentItem.value.status = 'Active';
+                        break;
+                }
+
+                document.getElementById('itemModal').style.display = 'block';
+            };
+
+            // 显示编辑表单
+            const showEditForm = (item) => {
+                isEditing.value = true;
+                currentItem.value = {...item};
+                document.getElementById('itemModal').style.display = 'block';
+            };
+
+            // 关闭模态框
+            const closeModal = () => {
+                document.getElementById('itemModal').style.display = 'none';
+            };
+
+            // 保存项目
+            const saveItem = () => {
+                let apiUrl = '';
+                let method = '';
+
+                switch (activeSubCategory.value) {
+                    case 'scp':
+                        apiUrl = '/api/scp';
+                        method = isEditing.value ? 'put' : 'post';
+                        break;
+                    case 'mtf':
+                        apiUrl = '/api/mtf';
+                        method = isEditing.value ? 'put' : 'post';
+                        break;
+                    case 'researcher':
+                        apiUrl = '/api/researcher';
+                        method = isEditing.value ? 'put' : 'post';
+                        break;
+                    case 'dclass':
+                        apiUrl = '/api/dclass';
+                        method = isEditing.value ? 'put' : 'post';
+                        break;
+                    case 'security':
+                        apiUrl = '/api/security';
+                        method = isEditing.value ? 'put' : 'post';
+                        break;
+                }
+
+                axios({
+                    method: method,
+                    url: apiUrl,
+                    data: currentItem.value,
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    }
+                }).then(function (response) {
+                    console.log('保存成功:', response.data);
+                    if (response.data.success) {
+                        showNotification('保存成功', 'success');
+                        closeModal();
+                        // 刷新数据
+                        dataInit(activeFoundation.value, activeSubCategory.value);
+                    } else {
+                        showNotification('保存失败: ' + response.data.message, 'error');
+                    }
+                }).catch(function (error) {
+                    console.error('保存失败:', error);
+                    showNotification('保存失败: ' + error.message, 'error');
+                });
+            };
+
+            // 删除项目
+            const deleteItem = (itemId) => {
+                if (!confirm('确定要删除这个项目吗？')) {
+                    return;
+                }
+
+                let apiUrl = '';
+                switch (activeSubCategory.value) {
+                    case 'scp':
+                        apiUrl = '/api/scp/' + itemId;
+                        break;
+                    case 'mtf':
+                        apiUrl = '/api/mtf/' + itemId;
+                        break;
+                    case 'researcher':
+                        apiUrl = '/api/researcher/' + itemId;
+                        break;
+                    case 'dclass':
+                        apiUrl = '/api/dclass/' + itemId;
+                        break;
+                    case 'security':
+                        apiUrl = '/api/security/' + itemId;
+                        break;
+                }
+
+                axios.delete(apiUrl, {
+                    headers: {
+                        'Accept': 'application/json'
+                    }
+                }).then(function (response) {
+                    console.log('删除成功:', response.data);
+                    if (response.data.success) {
+                        showNotification('删除成功', 'success');
+                        // 刷新数据
+                        dataInit(activeFoundation.value, activeSubCategory.value);
+                        // 如果删除的是当前选中的项目，清除选中状态
+                        if (activeItem.value === itemId) {
+                            activeItem.value = '';
+                        }
+                    } else {
+                        showNotification('删除失败: ' + response.data.message, 'error');
+                    }
+                }).catch(function (error) {
+                    console.error('删除失败:', error);
+                    showNotification('删除失败: ' + error.message, 'error');
+                });
+            };
+
+            // 高亮搜索文本
+            const highlightSearchText = (text) => {
+                if (!searchQuery.value) return text;
+
+                const query = searchQuery.value.toLowerCase();
+                const index = text.toLowerCase().indexOf(query);
+
+                if (index === -1) return text;
+
+                const before = text.substring(0, index);
+                const match = text.substring(index, index + query.length);
+                const after = text.substring(index + query.length);
+
+                return `${before}<span class="highlight">${match}</span>${after}`;
+            };
+
+            // 执行搜索
+            const performSearch = () => {
+                // 搜索已经在 computed 属性 filteredList 中自动处理
+                console.log('搜索:', searchQuery.value);
+            };
+
+
+
+            return {
+                // 数据
+                foundations,
+                subCategories,
+                activeFoundation,
+                activeSubCategory,
+                activeItem,
+                currentItem,
+                isEditing,
+                searchQuery,
+                currentScpList,
+                currentMtfList,
+                currentResearcherList,
+                currentDclassList,
+                currentSecurityList,
+                getCurrentList,
+                filteredList,
+
+                // 数据库
+                scpDatabase,
+                mtfDatabase,
+                researcherDatabase,
+                dclassDatabase,
+                securityDatabase,
+
+                // 方法
+                dataInit,
+                selectFoundation,
+                selectSubCategory,
+                selectItem,
+                goBack,
+                getClassType,
+                getActiveItem,
+
+                showAddForm,
+                showEditForm,
+                closeModal,
+                saveItem,
+                deleteItem,
+                getCurrentCategoryName,
+                showNotification,
+                highlightSearchText,
+                performSearch,
+
+                // 计算属性
+                canGoBack: computed(() => navigationHistory.value.length > 0)
+            };
+        }
+    }).mount('#app');
+
+    // 点击模态框外部关闭模态框
+    window.onclick = function(event) {
+        const modal = document.getElementById('itemModal');
+        if (event.target == modal) {
+            modal.style.display = 'none';
+        }
+    }
+</script>
+</body>
+</html>
